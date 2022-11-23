@@ -1,0 +1,28 @@
+﻿@page
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Pages/Shared/_Layout2.cshtml";
+}
+<body>
+    
+    <form action="/action_page.php" class="contain_f contain">
+       
+        <div class="container">
+            <h1 class="heading_container name text-black">Login</h1>
+           
+
+            <label for="user"><b>Username</b></label>
+            <input type="text" placeholder="Username" name="user" required>
+
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" required>
+            <a asp-page="/CreateAccount">Don't have an account?</a>
+            <div class="buttonctn loginbtnd">
+                <button type="submit" onclick="" class="loginbtn">Login</button>
+            </div>
+        </div>
+        
+    </form>
+    
+</body>
+

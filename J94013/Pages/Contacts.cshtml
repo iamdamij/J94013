@@ -1,0 +1,30 @@
+﻿@page
+@{
+    ViewData["Title"] = "Contacts";
+    Layout = "~/Pages/Shared/_Layout2.cshtml";
+}
+<body>
+
+   
+
+    
+        <form action="/action_page.php" class="contain_f contain">
+        <div class="container">
+            <h1 class="heading_container name text-black">
+                Contact Form</h1>
+            <label for="fname">Name</label>
+            <input type="text" id="fname" name="fullname" placeholder="Enter your fullname..">
+
+            <label for="lname">Username</label>
+            <input type="text" id="lname" name="Username" placeholder="Enter Username..">
+
+           
+            <label for="subject">Subject</label>
+            <textarea id="subject" name="subject" placeholder="Write something.."></textarea>
+
+            <input type="submit" value="Submit">
+        </div>
+        </form>
+    
+
+</body>
