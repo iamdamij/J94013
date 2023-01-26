@@ -45,11 +45,11 @@
             <th>
                 @Html.DisplayNameFor(model => model.Menu[0].ImgImageData)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Menu) {
+        @foreach (var item in Model.Menu) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -66,18 +66,21 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
-
-               <td>
-                            <img src="data:image/jpg;base64 ,@item.ImgImageData" width="120px" height="120px"/>
-                </td>
+            <td>
+             @Html.DisplayFor(modelItem => item.ImageFile)
+             <img src="data:image/jpg;base64 ,@item.ImgImageData" width="120px" height="120px"/>
+            </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
                     <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
                     <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>
+        <div class="container">
+        <a asp-area="" asp-page="/Admin/Booking">Customer Bookings</a>
+    </div>
     </div>
 </body>

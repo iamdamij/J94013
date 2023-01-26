@@ -9,19 +9,22 @@ using Microsoft.EntityFrameworkCore;
 using J94013.Data1;
 using J94013.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
-namespace J94013.Pages.Menus
+namespace J94013.Pages
 {
-    public class MenuModel : PageModel
+    public class MenusModel : PageModel
     {
+        
         private readonly J94013.Data1.J94013DbContext _context;
-        private readonly UserManager<ApplicationIdentity> um;
-        private readonly UserManager<ApplicationIdentity> _userManager;
-        public MenuModel(J94013.Data1.J94013DbContext context, UserManager<ApplicationIdentity> um)
+
+        private readonly UserManager<IdentityUser> _userManager;
+        public MenusModel(J94013.Data1.J94013DbContext context, UserManager<IdentityUser> um)
         {
             _context = context;
             _userManager = um;
         }
+
 
         public IList<Menu> Menu { get; set; } = default!;
         [BindProperty(SupportsGet = true)]
@@ -29,8 +32,21 @@ namespace J94013.Pages.Menus
         public SelectList? Cartegory { get; set; }
         [BindProperty(SupportsGet = true)]
         public string? MenuCartegory { get; set; }
-        public async Task OnGetAsync()
+
+        
+
+       
+
+       
+        //public IActionResult OnPostSearch()
+        //{
+        //    Menu = _context.Menu.FromSqlRaw("SELECT * FROM Menu WHERE Name LIKE '" + SearchString + "%'").ToList();
+        //    return Page();
+        //}
+
+       public async Task OnGetAsync()
         {
+            //Menu = _context.Menu.FromSqlRaw("SELECT * FROM Menu WHERE Active = 1").ToList();
             IQueryable<string> cartegoryQuery = from m in _context.Menu
                                                 orderby m.Cartegory
                                                 select m.Cartegory;
@@ -43,15 +59,17 @@ namespace J94013.Pages.Menus
 
             if (!string.IsNullOrEmpty(MenuCartegory))
             {
-                menus = menus.Where(x => x.Cartegory == MenuCartegory);
-            }
-            Cartegory = new SelectList(await cartegoryQuery.Distinct().ToListAsync());
-            Menu = await menus.ToListAsync();
+               menus = menus.Where(x => x.Cartegory == MenuCartegory);
+           }
+           Cartegory = new SelectList(await cartegoryQuery.Distinct().ToListAsync());
+           Menu = await menus.ToListAsync();
         }
-        public async Task<IActionResult> OnPostAddtocartAsync(int itemID)
+        
+        public async Task<IActionResult> OnPostBuyAsync(int itemID)
         {
+           
             var user = await _userManager.GetUserAsync(User);
-            CheckoutCustomer customer = await _context.CheckoutCustomers.FindAsync(user.FullName);
+            CheckoutCustomers customer = await _context.CheckoutCustomers.FindAsync(user.Email);
             var item = _context.CartItems.FromSqlRaw("SELECT * FROM CartItems WHERE MenuID ={0} AND CartID = {1}", itemID, customer.CartID)
             .ToList().FirstOrDefault();
 
@@ -61,14 +79,14 @@ namespace J94013.Pages.Menus
                 {
                     CartID = customer.CartID,
                     MenuID = itemID,
-                    Quanity = 1
+                    Quantity = 1
                 };
                 _context.CartItems.Add(newItem);
                 await _context.SaveChangesAsync();
             }
             else
             {
-                item.Quanity += 1;
+                item.Quantity += 1;
                 _context.Attach(item).State = EntityState.Modified;
                 try
                 {
@@ -76,7 +94,7 @@ namespace J94013.Pages.Menus
                 }
                 catch(DbUpdateConcurrencyException e)
                 {
-                    throw new Exception($"Unamle to add item to cart", e);
+                    throw new Exception($"Unable to add item to cart", e);
                 }
             }
             return RedirectToPage();

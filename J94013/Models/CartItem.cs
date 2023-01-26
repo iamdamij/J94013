@@ -9,6 +9,6 @@ namespace J94013.Models
         [Required]
         public int CartID { get; set; }
         [Required]
-        public int Quanity { get; set; }
+        public int Quantity { get; set; }
     }
 }

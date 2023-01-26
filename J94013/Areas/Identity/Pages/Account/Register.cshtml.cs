@@ -26,7 +26,7 @@ namespace J94013.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private J94013DbContext _db;
+        private readonly J94013.Data1.J94013DbContext _context;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserStore<IdentityUser> _userStore;
@@ -34,7 +34,7 @@ namespace J94013.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
-        public CheckoutCustomer Customer = new CheckoutCustomer();
+        public CheckoutCustomers Customer = new CheckoutCustomers();
         public Cart Cart = new Cart();
 
         public RegisterModel(
@@ -43,7 +43,7 @@ namespace J94013.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            J94013DbContext db)
+            J94013DbContext context)
              
         {
             _userManager = userManager;
@@ -52,7 +52,7 @@ namespace J94013.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _db = db;
+            _context = context;
         }
 
         /// <summary>
@@ -127,7 +127,9 @@ namespace J94013.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
+                //NewCart();
+                //NewCustomer(Input.Email);
+                //await _context.SaveChangesAsync();
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -145,7 +147,7 @@ namespace J94013.Areas.Identity.Pages.Account
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
                     NewCart();
                     NewCustomer(Input.Email);
-                    await _db.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
@@ -191,7 +193,7 @@ namespace J94013.Areas.Identity.Pages.Account
 
         public void NewCart()
         {
-            var currentCart = _db.Carts.FromSqlRaw("SELECT * FROM Carts" )
+            var currentCart = _context.Carts.FromSqlRaw("SELECT * FROM Carts" )
                 .OrderByDescending(b => b.CartID)
                 .FirstOrDefault();
             if(currentCart == null)
@@ -202,13 +204,13 @@ namespace J94013.Areas.Identity.Pages.Account
             {
                 Cart.CartID = currentCart.CartID + 1;
             }
-            _db.Carts.Add(Cart);
+            _context.Carts.Add(Cart);
         }
         public void NewCustomer(string Email)
         {
             Customer.Email = Email;
             Customer.CartID = Cart.CartID;
-            _db.CheckoutCustomers.Add(Customer);
+            _context.CheckoutCustomers.Add(Customer);
         }
     }
 } 

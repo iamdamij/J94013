@@ -1,0 +1,61 @@
+﻿@page
+@model J94013.Pages.Admin.BookingModel
+@{
+    ViewData["Title"] = "Bookings";
+    Layout = "~/Pages/Shared/_Layout2.cshtml";
+}
+<body>
+    <div class="menu">
+<form>
+    <h1 class="menu_h1">BOOKINGS</h1>
+
+    <p>
+                <select asp-for="BookingEmail" asp-items="Model.Email">
+            <option value="">All</option>
+        </select>
+        Name: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>
+                        @Html.DisplayNameFor(model => model.Bookings[0].Name)
+            </th>
+            <th>
+                        @Html.DisplayNameFor(model => model.Bookings[0].PhoneNo)
+            </th>
+            <th>
+                        @Html.DisplayNameFor(model => model.Bookings[0].Email)
+            </th>
+            <th>
+                        @Html.DisplayNameFor(model => model.Bookings[0].BookingDate)
+            </th>
+            
+           
+    </thead>
+    <tbody>
+                @foreach (var item in Model.Bookings)
+                {
+            <tr>
+                <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                            @Html.DisplayFor(modelItem => item.PhoneNo)
+                </td>
+                <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                            @Html.DisplayFor(modelItem => item.BookingDate)
+                </td>
+               
+            </tr>
+                }
+    </tbody>
+</table>
+    </div>
+</body>

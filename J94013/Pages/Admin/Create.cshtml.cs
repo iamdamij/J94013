@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using J94013.Data1;
 using J94013.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace J94013.Pages.Menus
 {
+    [Authorize(Roles = "Admin")]
     public class CreateModel : PageModel
     {
         private readonly J94013.Data1.J94013DbContext _context;

@@ -1,7 +1,9 @@
 using J94013.Data;
 using J94013.Data1;
+using J94013.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +17,17 @@ builder.Services.AddDbContext<J94013DbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
+    .AddRoleManager<RoleManager<IdentityRole>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+    
 builder.Services.AddRazorPages();
+
+
+StripeConfiguration.ApiKey = builder.Configuration.GetValue<string>("Stripe:SecretKey");
+
+builder.Services.AddScoped<StripeSettings>();
+
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -63,6 +74,22 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var roleManager = services.GetService <RoleManager<IdentityRole>>();
+    var userManager = services.GetService<UserManager<IdentityUser>>();
+    try
+    {
+        await InitAdmin(roleManager!, userManager!, "Admin");
+
+    }catch(NullReferenceException e)
+    {
+        Console.WriteLine(e);
+    }
+    var context = services.GetRequiredService<J94013DbContext>();
+    context.Database.EnsureCreated();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -75,3 +102,27 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+
+ async Task InitAdmin(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager, string role)
+{
+    
+
+    string[] roleNames = { "Admin", "Member" };
+
+    foreach (var roleName in roleNames)
+    {
+        var roleExist = await roleManager.RoleExistsAsync(roleName);
+        if (!roleExist)
+        {
+            //create the roles and seed them to the database
+            var roleResult = await roleManager.
+                CreateAsync(new IdentityRole(roleName));
+        }
+    }
+    var _user = await userManager.FindByEmailAsync("Admin@email.com");
+    if (_user != null)
+    {
+        await userManager.AddToRoleAsync(_user, "Admin");
+    }
+}
+

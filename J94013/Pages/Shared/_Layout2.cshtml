@@ -33,6 +33,9 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-page="/Contacts">Contacts</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-page="/Checkout">Checkout</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Account
@@ -48,7 +51,7 @@
                 </div>
         </nav>
        <section class="welcomepg">
-           <h1 class="name"><span>OFAD_</span>R</h1>
+                <a class="name navbar-brand" asp-area="" asp-page="/Index"><h1><span>OFAD_</span>R</h1></a>
        </section>
        </div>
            </header>
@@ -61,7 +64,10 @@
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2022 - OFAD_R - <a asp-area="" asp-page="/Privacy">Privacy</a>
-            <a  asp-area="" asp-page="/Menus/Index">Admin</a>
+           
+        </div>
+        <div class="container">
+            <a asp-area="" asp-page="/Admin/Index">Admin</a>
         </div>
         
 @*        <div>
